@@ -12,19 +12,19 @@ import (
 func GetKubeClient() (*kubernetes.Clientset, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return nil, fmt.Errorf("error getting home dir")
+		return nil, fmt.Errorf("error getting home dir: %w", err)
 	}
 
 	kubeConfigPath := filepath.Join(homeDir, ".kube", "config")
 
 	kubeConfig, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
 	if err != nil {
-		return nil, fmt.Errorf("error getting kube config")
+		return nil, fmt.Errorf("error getting kube config: %w", err)
 	}
 
 	clientSet, err := kubernetes.NewForConfig(kubeConfig)
 	if err != nil {
-		return nil, fmt.Errorf("error creating client set")
+		return nil, fmt.Errorf("error creating client set: %w", err)
 	}
 	return clientSet, nil
 }
