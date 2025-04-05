@@ -3,6 +3,7 @@ package registry
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -17,18 +18,18 @@ func GetImageTags(imageName string) (string, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("Error getting image tags")
+		return "", fmt.Errorf("error getting image tags")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 
-		return "", fmt.Errorf("Error: received non-200 response code")
+		return "", fmt.Errorf("error: received non-200 response code")
 	}
 	var tagsResponse TagsResponse
 
 	if err := json.NewDecoder(resp.Body).Decode(&tagsResponse); err != nil {
-		return "", fmt.Errorf("Error decoding respo")
+		return "", fmt.Errorf("error decoding respo")
 	}
 
 	if len(tagsResponse.Results) == 0 {
@@ -42,7 +43,7 @@ func GetImageTags(imageName string) (string, error) {
 	} else {
 		goldenTag = tagsResponse.Results[0].Name
 	}
-	fmt.Println("Tag for upgrade:", goldenTag)
+	log.Printf("Tag for upgrade: %v", goldenTag)
 	return goldenTag, nil
 
 }

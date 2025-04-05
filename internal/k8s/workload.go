@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"imageFlux/internal/registry"
+	"log"
 	"strings"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,13 +13,15 @@ import (
 func GetDeployment() {
 	clientSet, err := GetKubeClient()
 	if err != nil {
-		fmt.Errorf("Error getting kube client: %v", err)
+		log.Printf("Error getting kube client: %v", err)
 
 	}
+
 	deployments, err := clientSet.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		fmt.Errorf("Error getting deployments: %v", err)
+		log.Printf("Error getting deployments: %v", err)
 	}
+
 	for _, deployment := range deployments.Items {
 		annotations := deployment.GetAnnotations()
 		if val := annotations["ImageFlux"]; val == "Enabled" {
@@ -30,22 +33,26 @@ func GetDeployment() {
 				imageTag := imageParts[1]
 				fmt.Println("Image Name:", imageName)
 				fmt.Println("Image Tag:", imageTag)
-				currentTag, _ := registry.GetImageTags(imageName)
+				currentTag, err := registry.GetImageTags(imageName)
+				if err != nil {
+					log.Printf("Failed to fetach image tag for image %s: %v", imageName, err)
+					continue
+				}
 				if currentTag != imageTag {
 					fmt.Println("Image tag is not the latest:")
 					deployment.Spec.Template.Spec.Containers[0].Image = fmt.Sprintf("%s:%s", imageName, currentTag)
 					_, err := clientSet.AppsV1().Deployments(deployment.Namespace).Update(context.TODO(), &deployment, metav1.UpdateOptions{})
 					if err != nil {
-						fmt.Errorf("Error updating deployment image: %v", err)
+						log.Printf("Error updating deployment image: %v", err)
 					} else {
-						fmt.Println("Deployment image updated to the latest tag:", currentTag)
+						log.Printf("Deployment image updated to the latest tag: %v", currentTag)
 					}
 				} else {
-					fmt.Println("Image tag is already the latest:", imageTag)
+					log.Printf("Image tag is already the latest: %v", imageTag)
 				}
 
 			} else {
-				fmt.Println("Image does not have a tag:", image)
+				log.Printf("Image does not have a tag: %v", image)
 			}
 		}
 
