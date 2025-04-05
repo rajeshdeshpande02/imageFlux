@@ -1,0 +1,30 @@
+package k8s
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+)
+
+func GetKubeClient() (*kubernetes.Clientset, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return nil, fmt.Errorf("Error getting home dir")
+	}
+
+	kubeConfigPath := filepath.Join(homeDir, ".kube", "config")
+
+	kubeConfig, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+	if err != nil {
+		return nil, fmt.Errorf("Error getting kube config")
+	}
+
+	clientSet, err := kubernetes.NewForConfig(kubeConfig)
+	if err != nil {
+		return nil, fmt.Errorf("Error creating client set")
+	}
+	return clientSet, nil
+}
