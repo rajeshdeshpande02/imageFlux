@@ -17,7 +17,9 @@
 ---
 
 ## Design Patterns Used
-- Controller Loop with stopCh
+- Controller Loop
+
+- Pull Pattern
 
 - Adapter Pattern for DockerHub + Kube Clients
 
