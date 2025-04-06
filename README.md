@@ -25,7 +25,7 @@
 
 ## Architecture
 
-![alt text](image.png)
+![alt text](imageFlux.png)
 
 
 ## How It Works
@@ -69,8 +69,11 @@ go build -o imageflux ./cmd/main.go
 
 # Author
 Rajesh Deshpande
+
 DevOps | Kubernetes | Golang | Platform Engineering
+
 📌 Linkedin : https://www.linkedin.com/in/rajesh-deshpande-1058b9151/
+
 📦 GitHub: @rajeshdeshpande02
 
 
