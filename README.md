@@ -25,7 +25,7 @@
 
 ## Architecture
 
-![alt text](imageFlux.png)
+![alt text](ImageFlux.png)
 
 
 ## How It Works
